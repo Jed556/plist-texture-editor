@@ -86,11 +86,15 @@ loaded = False
 
 while 1:
     print('\nOptions:')
+    print('0) Exit')
     print('1) Load texture')
     if (loaded):
         print('2) Split texture')
         print('3) Merge texture')
     ui = input('Enter valid number: ')
+
+    if (ui == '0'):  # load textures
+        exit()
 
     if (ui == '1'):  # load textures
         loaded = True
@@ -123,52 +127,57 @@ while 1:
                 print('Gamesheet folder created')
         except:
             pass
-    if (ui == '2'):  # split texture
-        print('Saving images...')
-        for i in keys:
-            SaveSprite(i)  # for all keys, save sprite
-            print('Completed: '+i)
-        print('Rotating images...')
-        for i in keys:  # rotate images needed
-            if IsSpriteRotated(GetArray(i)):
-                img = Image.open(f+'\\'+i)  # opening target image
-                img.rotate(90, expand=True).save(f+'\\'+i)  # rotating image
-                img.close()  # closing image
-                print('Rotated: '+i)
-    if (ui == '3'):
-        print('Rotating images...')
-        for i in keys:  # rotating images back if needed
-            if IsSpriteRotated(GetArray(i)):
-                img = Image.open(f+'\\'+i)  # opening target image
-                # rotating image by -90
-                img.rotate(-90, expand=True).save(f+'\\'+i)
-                img.close()  # closing image
-                print('Rotated: '+i)
 
-        new = Image.new('RGBA', GetGamesheetSize())
+    if (loaded):
+        if (ui == '2' and loaded):  # split texture
+            print('Saving images...')
+            for i in keys:
+                SaveSprite(i)  # for all keys, save sprite
+                print('Completed: '+i)
+            print('Rotating images...')
+            for i in keys:  # rotate images needed
+                if IsSpriteRotated(GetArray(i)):
+                    img = Image.open(f+'\\'+i)  # opening target image
+                    img.rotate(90, expand=True).save(f+'\\'+i)  # rotating image
+                    img.close()  # closing image
+                    print('Rotated: '+i)
+                    
+        if (ui == '3' and loaded):
+            print('Rotating images...')
+            for i in keys:  # rotating images back if needed
+                if IsSpriteRotated(GetArray(i)):
+                    img = Image.open(f+'\\'+i)  # opening target image
+                    # rotating image by -90
+                    img.rotate(-90, expand=True).save(f+'\\'+i)
+                    img.close()  # closing image
+                    print('Rotated: '+i)
 
-        for key in keys:  # for all textures
-            targ = GetArray(key)  # getting plist array from plist file
-            pos = GetPosFromArray(targ)  # getting position of key on gamesheet
-            size = GetSizeFromArray(targ)  # getting size of key on gamesheet
-            print('Completed: '+key)
-            # opening image (made a stupid mistake earlier by opening the image per pixel, oops)
-            rd = Image.open(f+'\\'+key)
-            if (IsSpriteRotated(targ)):  # if rotated, spaw x and y in the size variable
-                size = size[::-1]  # reverse tuple
-            for x in range(size[0]):
-                for y in range(size[1]):
-                    # add target image, pixel by pixel, to gamesheet by size and position
-                    new.putpixel((x+pos[0], y+pos[1]), rd.getpixel((x, y)))
-            rd.close()  # close target image
-        new.save('merged\\'+f+'.png')  # save gamesheet in 'merged' folder
-        new.close()  # close gamesheet
+            new = Image.new('RGBA', GetGamesheetSize())
 
-        print('Rotating images...')
-        for i in keys:
-            if IsSpriteRotated(GetArray(i)):
-                img = Image.open(f+'\\'+i)  # opening target image
-                img.rotate(90, expand=True).save(
-                    f+'\\'+i)  # rotating image by 90
-                img.close()  # closing image
-                print('Rotated: '+i)
+            for key in keys:  # for all textures
+                targ = GetArray(key)  # getting plist array from plist file
+                pos = GetPosFromArray(targ)  # getting position of key on gamesheet
+                size = GetSizeFromArray(targ)  # getting size of key on gamesheet
+                print('Completed: '+key)
+                # opening image (made a stupid mistake earlier by opening the image per pixel, oops)
+                rd = Image.open(f+'\\'+key)
+                if (IsSpriteRotated(targ)):  # if rotated, spaw x and y in the size variable
+                    size = size[::-1]  # reverse tuple
+                for x in range(size[0]):
+                    for y in range(size[1]):
+                        # add target image, pixel by pixel, to gamesheet by size and position
+                        new.putpixel((x+pos[0], y+pos[1]), rd.getpixel((x, y)))
+                rd.close()  # close target image
+            new.save('merged\\'+f+'.png')  # save gamesheet in 'merged' folder
+            new.close()  # close gamesheet
+
+            print('Rotating images...')
+            for i in keys:
+                if IsSpriteRotated(GetArray(i)):
+                    img = Image.open(f+'\\'+i)  # opening target image
+                    img.rotate(90, expand=True).save(
+                        f+'\\'+i)  # rotating image by 90
+                    img.close()  # closing image
+                    print('Rotated: '+i)
+    else:
+        print('Enter a valid option')
